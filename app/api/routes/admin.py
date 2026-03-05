@@ -93,6 +93,7 @@ def list_all_students(
             "skills": s.skills,
             "placement_status": s.placement_status,
             "skills_count": len(s.skills or []),
+            "applications_count": len(s.applications or []),
         })
     return result
 

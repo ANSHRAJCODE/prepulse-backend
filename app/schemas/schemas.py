@@ -93,6 +93,7 @@ class JobCreate(BaseModel):
 class JobOut(BaseModel):
     id: int
     company_id: int
+    company_name: Optional[str] = None
     title: str
     description: Optional[str]
     role_type: str
@@ -105,6 +106,27 @@ class JobOut(BaseModel):
     deadline: Optional[datetime]
     is_active: bool
     created_at: datetime
+
+    @classmethod
+    def from_orm_with_company(cls, job):
+        data = {
+            "id": job.id,
+            "company_id": job.company_id,
+            "company_name": job.company.company_name if job.company else None,
+            "title": job.title,
+            "description": job.description,
+            "role_type": job.role_type,
+            "required_skills": job.required_skills,
+            "preferred_skills": job.preferred_skills,
+            "min_cgpa": job.min_cgpa,
+            "allowed_branches": job.allowed_branches,
+            "package_lpa": job.package_lpa,
+            "location": job.location,
+            "deadline": job.deadline,
+            "is_active": job.is_active,
+            "created_at": job.created_at,
+        }
+        return cls(**data)
 
     class Config:
         from_attributes = True

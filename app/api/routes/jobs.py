@@ -26,7 +26,7 @@ def list_jobs(
         company = db.query(Company).filter(Company.user_id == current_user.id).first()
         if company:
             query = query.filter(Job.company_id == company.id)
-    return query.all()
+    return [JobOut.from_orm_with_company(j) for j in query.all()]
 
 
 @router.get("/{job_id}", response_model=JobOut)
