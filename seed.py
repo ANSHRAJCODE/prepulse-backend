@@ -8,7 +8,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from app.db.database import SessionLocal, engine
 from app.models import user, student, job, application
-from app.core.security import get_password_hash
+from passlib.context import CryptContext
+_pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def get_password_hash(p): return _pwd.hash(p[:72])
 from app.models.user import User, UserRole
 from app.models.student import Student
 from app.models.job import Company, Job
