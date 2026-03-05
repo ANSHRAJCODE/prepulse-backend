@@ -21,3 +21,4 @@ httpx
 python-multipart
 email-validator
 alembic
+psycopg2-binary 
