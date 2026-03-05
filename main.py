@@ -65,3 +65,21 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "healthy"}
+
+
+@app.post("/api/seed-now")
+def trigger_seed():
+    """One-time endpoint to seed the database manually."""
+    db = SessionLocal()
+    try:
+        count = db.query(User).count()
+        if count > 0:
+            return {"message": f"Database already has {count} users. Skipping.", "seeded": False}
+        import seed
+        seed.seed()
+        new_count = db.query(User).count()
+        return {"message": f"Seed complete! {new_count} users created.", "seeded": True}
+    except Exception as e:
+        return {"message": f"Seed failed: {str(e)}", "seeded": False}
+    finally:
+        db.close()
