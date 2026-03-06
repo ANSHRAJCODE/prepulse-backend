@@ -21,7 +21,6 @@ def list_jobs(
     query = db.query(Job)
     if active_only:
         query = query.filter(Job.is_active == True)
-    # Companies only see their own job postings
     if current_user.role.value == "company":
         company = db.query(Company).filter(Company.user_id == current_user.id).first()
         if company:
@@ -34,7 +33,7 @@ def get_job(job_id: int, db: Session = Depends(get_db), current_user: User = Dep
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    return job
+    return JobOut.from_orm_with_company(job)
 
 
 @router.post("/", response_model=JobOut, status_code=201)
@@ -46,12 +45,65 @@ def create_job(
     company = db.query(Company).filter(Company.user_id == current_user.id).first()
     if not company:
         raise HTTPException(status_code=404, detail="Company profile not found")
-
     job = Job(**job_data.dict(), company_id=company.id)
     db.add(job)
     db.commit()
     db.refresh(job)
-    return job
+    return JobOut.from_orm_with_company(job)
+
+
+@router.put("/{job_id}", response_model=JobOut)
+def update_job(
+    job_id: int,
+    job_data: JobCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    job = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    company = db.query(Company).filter(Company.user_id == current_user.id).first()
+    if current_user.role.value != "admin" and (not company or job.company_id != company.id):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    for k, v in job_data.dict().items():
+        setattr(job, k, v)
+    db.commit()
+    db.refresh(job)
+    return JobOut.from_orm_with_company(job)
+
+
+@router.delete("/{job_id}")
+def delete_job(
+    job_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    job = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    company = db.query(Company).filter(Company.user_id == current_user.id).first()
+    if current_user.role.value != "admin" and (not company or job.company_id != company.id):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    db.delete(job)
+    db.commit()
+    return {"message": "Job deleted successfully"}
+
+
+@router.patch("/{job_id}/toggle")
+def toggle_job(
+    job_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    job = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    company = db.query(Company).filter(Company.user_id == current_user.id).first()
+    if current_user.role.value != "admin" and (not company or job.company_id != company.id):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    job.is_active = not job.is_active
+    db.commit()
+    return {"is_active": job.is_active}
 
 
 @router.get("/{job_id}/match")
@@ -60,15 +112,12 @@ def get_my_match(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get match percentage for current student vs a job."""
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-
     student = db.query(Student).filter(Student.user_id == current_user.id).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student profile not found")
-
     return calculate_match(student, job)
 
 
@@ -78,13 +127,10 @@ def get_ranked_students(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Admin/Company: Get all students ranked for this job."""
     if current_user.role.value not in ["admin", "company"]:
         raise HTTPException(status_code=403, detail="Not authorized")
-
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-
     students = db.query(Student).all()
     return rank_students_for_job(students, job)
