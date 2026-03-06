@@ -13,11 +13,9 @@ router = APIRouter()
 
 @router.post("/register", response_model=UserOut, status_code=201)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
-    # Check existing email
     if db.query(User).filter(User.email == user_data.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Create user
     user = User(
         email=user_data.email,
         hashed_password=get_password_hash(user_data.password),
@@ -28,7 +26,6 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    # Auto-create profile based on role
     if user_data.role.value == "student":
         student = Student(user_id=user.id, skills=[], certifications=[], projects=[])
         db.add(student)

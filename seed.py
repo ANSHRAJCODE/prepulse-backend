@@ -8,8 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from app.db.database import SessionLocal, engine
 from app.models import user, student, job, application
-DEMO_PASSWORD_HASH = "$2b$12$ncZBdP02NZHToQlUIB3cGeNqLs6gtnBMFxJfMq9j8h3MMXSO0ENd6"
-def get_password_hash(p): return DEMO_PASSWORD_HASH
+from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 from app.models.student import Student
 from app.models.job import Company, Job
