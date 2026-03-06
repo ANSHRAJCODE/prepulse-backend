@@ -68,18 +68,31 @@ def health():
 
 
 @app.post("/api/seed-now")
-def trigger_seed():
-    """One-time endpoint to seed the database manually."""
+def trigger_seed(force: bool = False):
+    """Seed the database. Use force=true to wipe and reseed."""
+    from app.models.application import Application
+    from app.models.student import Student
+    from app.models.job import Job, Company
     db = SessionLocal()
     try:
         count = db.query(User).count()
-        if count > 0:
-            return {"message": f"Database already has {count} users. Skipping.", "seeded": False}
+        if count > 0 and not force:
+            return {"message": f"Database already has {count} users. Use force=true to wipe and reseed.", "seeded": False}
+        if force:
+            # Wipe all data in correct order
+            db.query(Application).delete()
+            db.query(Student).delete()
+            db.query(Job).delete()
+            db.query(Company).delete()
+            db.query(User).delete()
+            db.commit()
+            print("Wiped all data")
         import seed
         seed.seed()
         new_count = db.query(User).count()
         return {"message": f"Seed complete! {new_count} users created.", "seeded": True}
     except Exception as e:
+        db.rollback()
         return {"message": f"Seed failed: {str(e)}", "seeded": False}
     finally:
         db.close()
