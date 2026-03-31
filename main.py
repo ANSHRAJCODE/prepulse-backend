@@ -5,6 +5,7 @@ from app.db.database import engine, SessionLocal
 from app.models import user, student, job, application
 from app.models.user import User
 from app.core.config import settings
+from app.api.routes import auth, students, jobs, applications, admin, ai, leaderboard
 
 # Create all tables
 user.Base.metadata.create_all(bind=engine)
@@ -55,7 +56,7 @@ app.include_router(jobs.router, prefix="/api/jobs", tags=["Jobs"])
 app.include_router(applications.router, prefix="/api/applications", tags=["Applications"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(ai.router, prefix="/api/ai", tags=["AI Roadmap"])
-
+app.include_router(leaderboard.router, prefix="/api", tags=["Leaderboard"])
 
 @app.get("/")
 def root():
