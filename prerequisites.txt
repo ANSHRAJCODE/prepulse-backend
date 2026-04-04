@@ -1,0 +1,49 @@
+  PrepPulse — Prerequisites & Setup Guide
+
+TO RUN THE LIVE VERSION (No setup needed)
+
+Simply open: https://prepulse-frontend.vercel.app
+Use the demo credentials provided in repository.txt
+
+TO RUN LOCALLY — PREREQUISITES
+
+1. PYTHON 3.11 or higher
+   Download: https://www.python.org/downloads/
+   Verify:   python --version
+
+2. NODE.JS 18 or higher
+   Download: https://nodejs.org/
+   Verify:   node --version
+
+3. GIT
+   Download: https://git-scm.com/
+   Verify:   git --version
+
+4. PostgreSQL (optional — SQLite works for local testing)
+   For local: The app auto-uses SQLite if PostgreSQL is not set
+   Just set in .env: DATABASE_URL=sqlite:///./prepulse.db
+
+5. OLLAMA (optional — only for AI Roadmap feature locally)
+   Download: https://ollama.com
+   After install, run: ollama pull llama3.2:3b
+   Without Ollama, the app shows a template roadmap instead
+
+ENVIRONMENT VARIABLES
+
+Backend (.env file in prepulse-backend/):
+  DATABASE_URL=sqlite:///./prepulse.db
+  SECRET_KEY=any-random-string-here
+  ALLOWED_ORIGINS=["http://localhost:5173"]
+  OLLAMA_BASE_URL=http://localhost:11434
+  OLLAMA_MODEL=llama3.2:3b
+  DEBUG=True
+
+Frontend (.env file in prepulse-frontend/):
+  VITE_API_URL=http://localhost:8000/api
+
+//
+- The live deployed version (Vercel + Render) requires NO setup
+- Render free tier may take 30-50 seconds to wake on first load
+- AI Roadmap works only when Ollama is running locally
+- All other features work fully on the deployed version
+//

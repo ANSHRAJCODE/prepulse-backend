@@ -1,0 +1,18 @@
+PrepPulse — AI-Driven Campus Placement Decision Support System
+
+LIVE APPLICATION (Executable Software):
+https://prepulse-frontend.vercel.app
+
+API Backend:
+https://prepulse-api.onrender.com
+
+API Documentation:
+https://prepulse-api.onrender.com/api/docs
+
+Sir one request that Render free tier may take 30-50 seconds to wake up
+on first login so kindly wait and try again if login is slow.
+
+Demo Credentials:
+  Admin:   admin@demo.com   / demo123
+  Student: student@demo.com / demo123
+  Company: tech@demo.com    / demo123

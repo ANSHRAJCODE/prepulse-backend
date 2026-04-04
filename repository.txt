@@ -1,0 +1,74 @@
+  PrepPulse — AI-Driven Campus Placement Decision Support System
+  Software Engineering Project | KIIT University | 2026
+
+LIVE DEPLOYMENT (Executable Software)
+--------------------------------------
+Frontend (Live App):  https://prepulse-frontend.vercel.app
+Backend API:          https://prepulse-api.onrender.com
+API Documentation:    https://prepulse-api.onrender.com/api/docs
+
+SOURCE CODE REPOSITORIES
+--------------------------
+Backend Repository:
+  https://github.com/ANSHRAJCODE/prepulse-backend
+
+Frontend Repository:
+  https://github.com/ANSHRAJCODE/prepulse-frontend
+
+DEMO CREDENTIALS
+-----------------
+Admin Login:
+  Email:    admin@demo.com
+  Password: demo123
+
+Student Login:
+  Email:    student@demo.com
+  Password: demo123
+
+Company/Recruiter Login:
+  Email:    tech@demo.com
+  Password: demo123
+
+HOW TO RUN LOCALLY
+
+Prerequisites:
+  - Python 3.11+
+  - Node.js 18+
+  - Git
+
+Step 1 — Clone repositories:
+  git clone https://github.com/ANSHRAJCODE/prepulse-backend
+  git clone https://github.com/ANSHRAJCODE/prepulse-frontend
+
+Step 2 — Backend setup:
+  cd prepulse-backend
+  python -m venv venv
+  venv\Scripts\activate          (Windows)
+  pip install -r requirements.txt
+  Create .env file (see .env.example)
+  python seed.py
+  uvicorn main:app --reload
+
+Step 3 — Frontend setup:
+  cd prepulse-frontend
+  npm install
+  Create .env file with: VITE_API_URL=http://localhost:8000/api
+  npm run dev
+
+Step 4 — Open browser:
+  http://localhost:5173
+
+TEAM MEMBERS
+
+  Ansh Raj           | Roll: 2330289 | Backend, Frontend, Deployment
+  Manya Singh        | Roll: 2330311 | Frontend, UI/UX Design
+  Preetush Bhowmik   | Roll: 2330175 | Match Engine, Database Design
+  Labani Sen         | Roll: 2330309 | Testing, Documentation
+
+TECH STACK
+
+  Backend:    FastAPI (Python), SQLAlchemy, PostgreSQL, JWT Auth
+  Frontend:   React 18, Vite, TailwindCSS
+  AI Engine:  Ollama (Llama 3.2:3b) — runs locally, zero API cost
+  Deployment: Render (backend + DB), Vercel (frontend)
+
